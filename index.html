@@ -42,23 +42,19 @@
 
 
 <script>
-/* ═══════════════════════════════════════════════════
-   MEDYA LİSTESİ — resim ve video karıştırılabilir
-   Resim: .jpg / .png / .webp
-   Video: .mp4  (video bitti → otomatik sonraki)
-   ═══════════════════════════════════════════════════ */
-const MEDIA = [
-  { src: 'images/video-1.mp4' },
-];
+/* ══════════════════════════════════════════════════════
+   AYAR — sadece repo adını değiştirin, başka bir şey yok
+   images/ klasörüne ne yüklerseniz otomatik görünür
+   ══════════════════════════════════════════════════════ */
+const REPO         = 'haimow/macan';
+const IMAGES_DIR   = 'images';
+const IMAGE_DUR    = 7; // resimler için bekleme süresi (saniye)
+const REFRESH_MS   = 60 * 60 * 1000; // yeni dosyalar için saatte bir kontrol
 
-/* ══════════════════════════
-   AYARLAR
-   ══════════════════════════ */
-const CONFIG = {
-  imageDuration : 7,
-};
+const MEDIA_EXTS   = /\.(mp4|webm|mov|ogg|jpg|jpeg|png|webp|gif)$/i;
+const VIDEO_EXTS   = /\.(mp4|webm|mov|ogg)$/i;
 
-/* ─── init ─── */
+/* ─── DOM ─── */
 const stage      = document.getElementById('stage');
 const dotsEl     = document.getElementById('dots');
 const progressEl = document.getElementById('progress');
@@ -69,16 +65,33 @@ let paused    = false;
 let autoTimer = null;
 let slides    = [];
 
-function isVid(src){ return /\.(mp4|webm|ogg|mov)$/i.test(src); }
+/* ─── GitHub API'dan dosya listesi çek ─── */
+async function fetchMediaList() {
+  const url = `https://api.github.com/repos/${REPO}/contents/${IMAGES_DIR}`;
+  const res  = await fetch(url, { headers: { Accept: 'application/vnd.github.v3+json' } });
+  if (!res.ok) throw new Error('GitHub API hatası: ' + res.status);
+  const files = await res.json();
+  return files
+    .filter(f => f.type === 'file' && MEDIA_EXTS.test(f.name))
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map(f => ({ src: `${IMAGES_DIR}/${f.name}` }));
+}
 
-function init(){
-  MEDIA.forEach((item,i) => {
+/* ─── Slaytları oluştur ─── */
+function buildSlides(media) {
+  // Temizle
+  stage.innerHTML = '';
+  dotsEl.innerHTML = '';
+  slides = [];
+  current = 0;
+
+  media.forEach((item, i) => {
     const slide = document.createElement('div');
     slide.className = 'slide';
-    if(isVid(item.src)){
+    if (VIDEO_EXTS.test(item.src)) {
       const v = document.createElement('video');
       v.src = item.src; v.muted = true; v.playsInline = true; v.preload = 'auto'; v.loop = false;
-      v.addEventListener('ended', () => { if(!paused) advance(); });
+      v.addEventListener('ended', () => { if (!paused) advance(); });
       slide.appendChild(v);
     } else {
       const img = document.createElement('img'); img.src = item.src; img.alt = '';
@@ -88,7 +101,30 @@ function init(){
     const dot = document.createElement('div'); dot.className = 'dot';
     dot.addEventListener('click', () => goTo(i)); dotsEl.appendChild(dot);
   });
+
   goTo(0);
+}
+
+/* ─── Başlat ─── */
+async function init() {
+  try {
+    const media = await fetchMediaList();
+    if (!media.length) return;
+    buildSlides(media);
+
+    // Saatte bir yeni dosya kontrolü (sayfa yeniden yüklenmez, liste güncellenir)
+    setInterval(async () => {
+      try {
+        const fresh = await fetchMediaList();
+        if (fresh.length !== slides.length ||
+            fresh.some((f, i) => f.src !== slides[i]?.querySelector('img,video')?.src?.split('/').slice(-2).join('/'))) {
+          buildSlides(fresh);
+        }
+      } catch (_) {}
+    }, REFRESH_MS);
+  } catch (e) {
+    console.error(e);
+  }
 }
 
 function showSlide(i){
