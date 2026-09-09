@@ -6,187 +6,31 @@
   <title>Maçan Real Estate</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --gold: #C9A84C;
-      --gold-dim: rgba(201,168,76,0.4);
-      --dark: #0C1710;
-    }
-
-    body {
-      background: var(--dark);
-      width: 100vw; height: 100vh;
-      overflow: hidden;
-      font-family: 'Georgia', serif;
-    }
-
-    /* ── SLIDES ── */
-    #stage {
-      position: fixed; inset: 0;
-    }
-
-    .slide {
-      position: absolute; inset: 0;
-      opacity: 0;
-      transition: opacity 1.4s ease-in-out;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--dark);
-    }
-
+    :root { --gold: #C9A84C; --dark: #0C1710; }
+    body { background: var(--dark); width: 100vw; height: 100vh; overflow: hidden; font-family: 'Georgia', serif; }
+    #stage { position: fixed; inset: 0; }
+    .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.4s ease-in-out; display: flex; align-items: center; justify-content: center; background: var(--dark); }
     .slide.active { opacity: 1; z-index: 2; }
-
-    .slide img {
-      width: 100%; height: 100%;
-      object-fit: contain;
-      user-select: none;
-      -webkit-user-drag: none;
-    }
-
-    /* ── VIGNETTE ── */
-    #vignette {
-      position: fixed; inset: 0;
-      background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.6) 100%);
-      pointer-events: none;
-      z-index: 10;
-    }
-
-    /* ── PROGRESS ── */
-    #progress {
-      position: fixed;
-      bottom: 0; left: 0;
-      height: 2px;
-      background: var(--gold);
-      z-index: 30;
-    }
-
-    /* ── DOTS ── */
-    #dots {
-      position: fixed;
-      bottom: 22px; left: 50%; transform: translateX(-50%);
-      display: flex; gap: 10px;
-      z-index: 30;
-    }
-
-    .dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: rgba(201,168,76,0.25);
-      border: 1px solid rgba(201,168,76,0.5);
-      cursor: pointer;
-      transition: background 0.4s, transform 0.4s;
-    }
-
-    .dot.active {
-      background: var(--gold);
-      transform: scale(1.5);
-    }
-
-    /* ── WATERMARK ── */
-    #watermark {
-      position: fixed;
-      bottom: 32px; right: 40px;
-      z-index: 20;
-      text-align: right;
-      opacity: 0.4;
-      pointer-events: none;
-    }
-
-    #watermark .wm-brand {
-      font-size: 0.85rem;
-      letter-spacing: 0.35em;
-      color: var(--gold);
-    }
-
-    #watermark .wm-rule {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold));
-      margin: 3px 0;
-      opacity: 0.6;
-    }
-
-    #watermark .wm-sub {
-      font-size: 0.55rem;
-      letter-spacing: 0.28em;
-      color: var(--gold);
-    }
-
-    /* ── PAUSE BADGE ── */
-    #pause-badge {
-      position: fixed;
-      top: 22px; right: 22px;
-      z-index: 30;
-      padding: 7px 16px;
-      border: 1px solid var(--gold-dim);
-      background: rgba(0,0,0,0.55);
-      color: var(--gold);
-      font-size: 0.65rem;
-      letter-spacing: 0.2em;
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
-
+    .slide img { width: 100%; height: 100%; object-fit: contain; user-select: none; -webkit-user-drag: none; }
+    .slide video { width: 100%; height: 100%; object-fit: contain; background: var(--dark); }
+    #vignette { position: fixed; inset: 0; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%); pointer-events: none; z-index: 10; }
+    #progress { position: fixed; bottom: 0; left: 0; height: 2px; background: var(--gold); z-index: 30; }
+    #dots { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); display: flex; gap: 10px; z-index: 30; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(201,168,76,0.25); border: 1px solid rgba(201,168,76,0.5); cursor: pointer; transition: background 0.4s, transform 0.4s; }
+    .dot.active { background: var(--gold); transform: scale(1.5); }
+    #watermark { position: fixed; bottom: 32px; right: 40px; z-index: 20; text-align: right; opacity: 0.4; pointer-events: none; }
+    #watermark .wm-brand { font-size: 0.85rem; letter-spacing: 0.35em; color: var(--gold); }
+    #watermark .wm-rule { height: 1px; background: linear-gradient(90deg, transparent, var(--gold)); margin: 3px 0; opacity: 0.6; }
+    #watermark .wm-sub { font-size: 0.55rem; letter-spacing: 0.28em; color: var(--gold); }
+    #video-badge { position: fixed; top: 22px; left: 22px; z-index: 30; padding: 6px 14px; border: 1px solid rgba(201,168,76,0.3); background: rgba(0,0,0,0.5); color: rgba(201,168,76,0.7); font-size: 0.6rem; letter-spacing: 0.18em; opacity: 0; transition: opacity 0.4s; pointer-events: none; }
+    #video-badge.show { opacity: 1; }
+    #pause-badge { position: fixed; top: 22px; right: 22px; z-index: 30; padding: 7px 16px; border: 1px solid rgba(201,168,76,0.4); background: rgba(0,0,0,0.55); color: var(--gold); font-size: 0.65rem; letter-spacing: 0.2em; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
     #pause-badge.show { opacity: 1; }
-
-    /* ── HIDDEN HINT (tap area) ── */
-    #hint {
-      position: fixed;
-      bottom: 50px; left: 50%; transform: translateX(-50%);
-      color: rgba(255,255,255,0.18);
-      font-size: 0.6rem;
-      letter-spacing: 0.18em;
-      z-index: 30;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 2s;
-    }
-
+    #hint { position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.2); font-size: 0.6rem; letter-spacing: 0.18em; z-index: 30; pointer-events: none; opacity: 0; transition: opacity 2s; white-space: nowrap; }
     #hint.show { opacity: 1; }
-
-    /* ── ERROR STATE ── */
-    #error-state {
-      position: fixed; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 16px;
-      z-index: 50;
-      background: var(--dark);
-    }
-
-    .err-brand {
-      font-size: 2rem;
-      letter-spacing: 0.35em;
-      color: var(--gold);
-    }
-
-    .err-line {
-      width: 180px; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      opacity: 0.5;
-    }
-
-    .err-text {
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.45);
-      letter-spacing: 0.08em;
-      text-align: center;
-      line-height: 2;
-    }
-
-    .err-code {
-      font-family: monospace;
-      font-size: 0.7rem;
-      color: rgba(201,168,76,0.5);
-      background: rgba(201,168,76,0.05);
-      padding: 12px 24px;
-      border: 1px solid rgba(201,168,76,0.15);
-      text-align: left;
-      line-height: 2;
-    }
   </style>
 </head>
 <body>
-
 <div id="stage"></div>
 <div id="vignette"></div>
 <div id="progress"></div>
@@ -196,159 +40,127 @@
   <div class="wm-rule"></div>
   <div class="wm-sub">REAL ESTATE</div>
 </div>
+<div id="video-badge">&#9654; VİDEO</div>
 <div id="pause-badge">⏸ &nbsp;DURAKLATILDI</div>
 <div id="hint">BOŞLUK · DURDUR &nbsp;|&nbsp; ← → · GEÇİŞ &nbsp;|&nbsp; F · TAM EKRAN</div>
 
-<div id="error-state" style="display:none">
-  <div class="err-brand">MAÇAN</div>
-  <div class="err-line"></div>
-  <div class="err-text">
-    Görsel bulunamadı.<br>
-    <code>index.html</code> dosyasında <strong>IMAGES</strong> listesini kontrol edin.
-  </div>
-  <div class="err-code" id="err-detail"></div>
-</div>
-
 <script>
-/* ═══════════════════════════════════════════════════════════
-   🖼  GÖRSEL LİSTESİ
-   - images/ klasörüne yüklediğiniz dosyaların adını yazın
-   - Yeni görsel eklemek için satır ekleyin, silmek için satırı silin
-   ═══════════════════════════════════════════════════════════ */
-const IMAGES = [
-  'images/gorsel-1.jpg',
-  'images/gorsel-2.jpg',
-  'images/gorsel-3.jpg',
+/* ═══════════════════════════════════════════════════
+   MEDYA LİSTESİ — resim ve video karıştırılabilir
+   Resim: .jpg / .png / .webp
+   Video: .mp4  (video bitti → otomatik sonraki)
+   ═══════════════════════════════════════════════════ */
+const MEDIA = [
+  { src: 'images/video-1.mp4' },
 ];
 
-/* ═══════════════════════════════════════════════════════════
-   ⚙  AYARLAR
-   ═══════════════════════════════════════════════════════════ */
+/* ══════════════════════════
+   AYARLAR
+   ══════════════════════════ */
 const CONFIG = {
-  slideDuration : 7,    // Her görselin ekranda kalma süresi (saniye)
-  transition    : 1.4,  // Geçiş efekti süresi (saniye) — değiştirmeyin
+  imageDuration : 7,
 };
 
-/* ─────────────────────────────────────────── */
-
-const stage    = document.getElementById('stage');
-const dotsEl   = document.getElementById('dots');
-const progress = document.getElementById('progress');
+/* ─── init ─── */
+const stage      = document.getElementById('stage');
+const dotsEl     = document.getElementById('dots');
+const progressEl = document.getElementById('progress');
 const pauseBadge = document.getElementById('pause-badge');
-const hint     = document.getElementById('hint');
+const videoBadge = document.getElementById('video-badge');
+const hint       = document.getElementById('hint');
 
-let current  = 0;
-let paused   = false;
-let timer    = null;
-let progTimer = null;
-let slides   = [];
+let current   = 0;
+let paused    = false;
+let autoTimer = null;
+let slides    = [];
 
-function init() {
-  if (!IMAGES.length) { showError('IMAGES dizisi boş.'); return; }
+function isVid(src){ return /\.(mp4|webm|ogg|mov)$/i.test(src); }
 
-  IMAGES.forEach((src, i) => {
-    // Slide
+function init(){
+  MEDIA.forEach((item,i) => {
     const slide = document.createElement('div');
     slide.className = 'slide';
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = '';
-    img.onerror = () => { slide.style.background = '#0C1710'; };
-    slide.appendChild(img);
-    stage.appendChild(slide);
-    slides.push(slide);
-
-    // Dot
-    const dot = document.createElement('div');
-    dot.className = 'dot';
-    dot.addEventListener('click', () => goTo(i));
-    dotsEl.appendChild(dot);
+    if(isVid(item.src)){
+      const v = document.createElement('video');
+      v.src = item.src; v.muted = true; v.playsInline = true; v.preload = 'auto'; v.loop = false;
+      v.addEventListener('ended', () => { if(!paused) advance(); });
+      slide.appendChild(v);
+    } else {
+      const img = document.createElement('img'); img.src = item.src; img.alt = '';
+      slide.appendChild(img);
+    }
+    stage.appendChild(slide); slides.push(slide);
+    const dot = document.createElement('div'); dot.className = 'dot';
+    dot.addEventListener('click', () => goTo(i)); dotsEl.appendChild(dot);
   });
-
-  goTo(0);
-  scheduleNext();
-  flashHint();
+  goTo(0); flashHint();
 }
 
-function showSlide(i) {
+function showSlide(i){
+  const prev = slides[current]; const pv = prev && prev.querySelector('video');
+  if(pv){ pv.pause(); pv.currentTime = 0; }
   slides.forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
-
-  slides[i].classList.add('active');
-  document.querySelectorAll('.dot')[i]?.classList.add('active');
-  current = i;
-}
-
-function goTo(i) {
-  const n = (i + slides.length) % slides.length;
-  showSlide(n);
-  animateProgress();
-}
-
-function next() {
-  goTo((current + 1) % slides.length);
-}
-
-function scheduleNext() {
-  clearTimeout(timer);
-  timer = setInterval(() => {
-    if (!paused) next();
-  }, CONFIG.slideDuration * 1000);
-}
-
-function resetTimer() {
-  clearInterval(timer);
-  scheduleNext();
-  animateProgress();
-}
-
-function animateProgress() {
-  progress.style.transition = 'none';
-  progress.style.width = '0%';
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      progress.style.transition = `width ${CONFIG.slideDuration}s linear`;
-      progress.style.width = '100%';
-    });
-  });
-}
-
-function togglePause() {
-  paused = !paused;
-  pauseBadge.classList.toggle('show', paused);
-  if (!paused) { resetTimer(); }
-}
-
-function flashHint() {
-  hint.classList.add('show');
-  setTimeout(() => hint.classList.remove('show'), 3500);
-}
-
-function showError(msg) {
-  document.getElementById('error-state').style.display = 'flex';
-  document.getElementById('err-detail').textContent =
-    'IMAGES = [\n  ' + IMAGES.map(s => `'${s}'`).join(',\n  ') + '\n]\n\n' + msg;
-}
-
-/* ── Keyboard ── */
-document.addEventListener('keydown', e => {
-  if (e.code === 'Space')      { e.preventDefault(); togglePause(); }
-  if (e.code === 'ArrowRight') { goTo(current + 1); resetTimer(); }
-  if (e.code === 'ArrowLeft')  { goTo(current - 1); resetTimer(); }
-  if (e.code === 'KeyF' || e.code === 'F11') {
-    e.preventDefault();
-    if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
-    else document.exitFullscreen?.();
+  clearTimeout(autoTimer);
+  current = ((i % slides.length) + slides.length) % slides.length;
+  slides[current].classList.add('active');
+  document.querySelectorAll('.dot')[current].classList.add('active');
+  const cv = slides[current].querySelector('video');
+  if(cv){
+    videoBadge.classList.add('show');
+    progressEl.style.transition = 'none'; progressEl.style.width = '0%';
+    cv.play().catch(()=>{});
+    const startProg = () => {
+      const dur = cv.duration || 10;
+      requestAnimationFrame(()=>requestAnimationFrame(()=>{
+        progressEl.style.transition = `width ${dur}s linear`;
+        progressEl.style.width = '100%';
+      }));
+    };
+    if(cv.readyState >= 1) startProg();
+    else cv.addEventListener('loadedmetadata', startProg, {once:true});
+  } else {
+    videoBadge.classList.remove('show');
+    animateProgress(CONFIG.imageDuration);
+    autoTimer = setTimeout(() => { if(!paused) advance(); }, CONFIG.imageDuration * 1000);
   }
+}
+
+function goTo(i){ showSlide(i); }
+function advance(){ goTo(current + 1); }
+
+function animateProgress(dur){
+  progressEl.style.transition = 'none'; progressEl.style.width = '0%';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    progressEl.style.transition = `width ${dur}s linear`; progressEl.style.width = '100%';
+  }));
+}
+
+function togglePause(){
+  paused = !paused; pauseBadge.classList.toggle('show', paused);
+  const cv = slides[current] && slides[current].querySelector('video');
+  if(cv){ paused ? cv.pause() : cv.play(); }
+  else {
+    if(!paused) autoTimer = setTimeout(() => { if(!paused) advance(); }, CONFIG.imageDuration * 1000);
+    else clearTimeout(autoTimer);
+  }
+}
+
+function flashHint(){ hint.classList.add('show'); setTimeout(()=>hint.classList.remove('show'), 3500); }
+
+document.addEventListener('keydown', e => {
+  if(e.code==='Space'){ e.preventDefault(); togglePause(); }
+  if(e.code==='ArrowRight'){ paused=false; advance(); }
+  if(e.code==='ArrowLeft'){ paused=false; goTo(current-1); }
+  if(e.code==='KeyF'||e.code==='F11'){ e.preventDefault(); !document.fullscreenElement ? document.documentElement.requestFullscreen() : document.exitFullscreen(); }
 });
 
-/* ── Touch swipe ── */
-let touchX = 0;
-document.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+let tx=0;
+document.addEventListener('touchstart', e => { tx=e.touches[0].clientX; });
 document.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchX;
-  if (Math.abs(dx) > 50) { goTo(dx < 0 ? current + 1 : current - 1); resetTimer(); }
-  else { togglePause(); }
+  const dx = e.changedTouches[0].clientX - tx;
+  if(Math.abs(dx)>50){ paused=false; dx<0 ? advance() : goTo(current-1); }
+  else togglePause();
 });
 
 init();
