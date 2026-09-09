@@ -48,7 +48,7 @@
    ══════════════════════════════════════════════════════ */
 const REPO         = 'haimow/macan';
 const IMAGES_DIR   = 'images';
-const IMAGE_DUR    = 7; // resimler için bekleme süresi (saniye)
+const IMAGE_DUR    = 5; // resimler için bekleme süresi (saniye)
 const REFRESH_MS   = 60 * 60 * 1000; // yeni dosyalar için saatte bir kontrol
 
 const MEDIA_EXTS   = /\.(mp4|webm|mov|ogg|jpg|jpeg|png|webp|gif)$/i;
@@ -150,8 +150,8 @@ function showSlide(i){
     if(cv.readyState >= 1) startProg();
     else cv.addEventListener('loadedmetadata', startProg, {once:true});
   } else {
-    animateProgress(CONFIG.imageDuration);
-    autoTimer = setTimeout(() => { if(!paused) advance(); }, CONFIG.imageDuration * 1000);
+    animateProgress(IMAGE_DUR);
+    autoTimer = setTimeout(() => { if(!paused) advance(); }, IMAGE_DUR * 1000);
   }
 }
 
@@ -170,7 +170,7 @@ function togglePause(){
   const cv = slides[current] && slides[current].querySelector('video');
   if(cv){ paused ? cv.pause() : cv.play(); }
   else {
-    if(!paused) autoTimer = setTimeout(() => { if(!paused) advance(); }, CONFIG.imageDuration * 1000);
+    if(!paused) autoTimer = setTimeout(() => { if(!paused) advance(); }, IMAGE_DUR * 1000);
     else clearTimeout(autoTimer);
   }
 }
