@@ -6,13 +6,18 @@
   <title>Maçan Real Estate</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root { --gold: #C9A84C; --dark: #0C1710; }
+    /* --zoom: 1 = ekrani doldurur, 0.93 = %7 uzaklastirir. TV'de hala kirpiliyorsa 0.90 yapin */
+    :root { --gold: #C9A84C; --dark: #0C1710; --zoom: 0.93; }
     body { background: var(--dark); width: 100vw; height: 100vh; overflow: hidden; font-family: 'Georgia', serif; }
     #stage { position: fixed; inset: 0; }
     .slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.4s ease-in-out; display: flex; align-items: center; justify-content: center; background: var(--dark); }
     .slide.active { opacity: 1; z-index: 2; }
-    .slide img { width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; }
-    .slide video { width: 100%; height: 100%; object-fit: cover; background: var(--dark); }
+    .slide .bg { position: absolute; inset: -6%; background-size: cover; background-position: center; filter: blur(34px) brightness(0.8); }
+    .slide img { position: relative; width: 100%; height: 100%; object-fit: contain; transform: scale(var(--zoom)); user-select: none; -webkit-user-drag: none;
+      -webkit-mask-image: linear-gradient(to right, transparent, #000 2.5%, #000 97.5%, transparent), linear-gradient(to bottom, transparent, #000 4%, #000 96%, transparent);
+      mask-image: linear-gradient(to right, transparent, #000 2.5%, #000 97.5%, transparent), linear-gradient(to bottom, transparent, #000 4%, #000 96%, transparent);
+      -webkit-mask-composite: source-in; mask-composite: intersect; }
+    .slide video { position: relative; width: 100%; height: 100%; object-fit: contain; transform: scale(var(--zoom)); background: var(--dark); }
     #vignette { position: fixed; inset: 0; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%); pointer-events: none; z-index: 10; }
     #progress { display: none; }
     #dots { display: none; }
@@ -94,6 +99,7 @@ function buildSlides(media) {
       v.addEventListener('ended', () => { if (!paused) advance(); });
       slide.appendChild(v);
     } else {
+      const bg = document.createElement('div'); bg.className = 'bg'; bg.style.backgroundImage = 'url("' + item.src + '")'; slide.appendChild(bg);
       const img = document.createElement('img'); img.src = item.src; img.alt = '';
       slide.appendChild(img);
     }
